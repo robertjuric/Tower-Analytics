@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:15
+    container_name: tower-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tower
+      POSTGRES_PASSWORD: towerpass
+      POSTGRES_DB: towerdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  grafana:
+    image: grafana/grafana
+    container_name: tower-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
+      #- ./grafana/dashboards:/var/lib/grafana/dashboards
+      # - ./grafana/provisioning:/etc/grafana/provisioning
+
+  ingest:
+    build: ./ingest
+    container_name: tower-ingest
+    depends_on:
+      - db
+    volumes:
+      - ./reports:/app/reports
+    command: ["python", "-u", "ingest.py"]
+  ui:
+    build: ./ui
+    container_name: tower-ui
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+  grafana_data:
+  grafana-data:

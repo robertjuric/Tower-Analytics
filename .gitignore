@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Env
+.env
+
+# User data
+data/reports/*
+
+# Docker volumes (if local)
+postgres-data/
+grafana-storage/
+
+# OS junk
+.DS_Store
+Thumbs.db

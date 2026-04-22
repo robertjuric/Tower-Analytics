@@ -1,0 +1,143 @@
+<html>
+<body>
+<head>
+    <title>Battle Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
+            margin: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f2f5;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        tr:hover {
+            background-color: #f1f7ff;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 3px 8px;
+            margin: 2px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .tag button {
+            border: none;
+            background: none;
+            margin-left: 4px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        input {
+            padding: 4px;
+            margin: 2px 0;
+        }
+
+        button {
+            padding: 4px 8px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .note {
+            font-size: 16px;
+        }
+
+        .actions form {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<h2>Battle Reports</h2>
+
+<table border="1">
+<tr>
+    <th>Date</th>
+    <th>Tier</th>
+    <th>Wave</th>
+    <th>Coins</th>
+    <th>Coins/Hour</th>
+    <th>Cells</th>
+    <th>Tags</th>
+    <th>Note</th>
+    <th>Actions</th>
+</tr>
+
+{% for r in rows %}
+<tr>
+    <td>{{ r.battle_date }}</td>
+    <td>{{ r.tier }}</td>
+    <td>{{ r.wave }}</td>
+    <td title="{{ r.coins_earned }}">{{ r.coins_earned_fmt }}</td>
+    <td title="{{ r.coins_per_hour }}">{{ r.coins_per_hour_fmt }}</td>
+    <td title="{{ r.cells }}">{{ r.cells_fmt }}</td>
+
+    <td>
+      {% for tag in r.tags.split(', ') if r.tags %}
+        <span class="tag">
+          {{ tag }}
+          <form action="/tag/remove" method="post" style="display:inline;">
+            <input type="hidden" name="report_id" value="{{ r.id }}">
+            <input type="hidden" name="tag" value="{{ tag }}">
+            <button>x</button>
+          </form>
+        </span>
+      {% endfor %}
+    </td>
+
+    <td class="note" title="{{ r.notes }}">
+        {% if r.notes %}
+            📝
+        {% else %}
+            —
+        {% endif %}
+    </td>
+
+    <td class="actions">
+        <form action="/tag/add" method="post">
+            <input type="hidden" name="report_id" value="{{ r.id }}">
+            <input name="tag" placeholder="tag">
+            <button>Add</button>
+        </form>
+
+        <form action="/note/update" method="post">
+            <input type="hidden" name="report_id" value="{{ r.id }}">
+            <input name="note" placeholder="note">
+            <button>Save</button>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+</html>
