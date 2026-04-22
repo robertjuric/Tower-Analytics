@@ -37,10 +37,8 @@ The first step is to save all of the battle reports from your battle history.
 1. Open your battle history.
 2. Open a report and click the copy button.
 3. Paste the report and save it as a `.txt` file.
-* You can set tags via the file name by including the tag name in `[]` brackets.
 * Example `BattleReport4-20[tournament].txt`
 * The exact filename does not matter.
-* When processed, .
 * At this point I recommend manually adding `[tournament]` and `[dissonance]` tags via the filename.
 
 ### 1. Clone the Repository (aka download a copy)
