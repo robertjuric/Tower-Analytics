@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS battle_economy (
 );
 
 -- =========================
--- BATTLE ATTACK (Offense)
+-- BATTLE ATTACK
 -- =========================
 CREATE TABLE IF NOT EXISTS battle_attack (
     id SERIAL PRIMARY KEY,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS battle_attack (
 );
 
 -- =========================
--- BATTLE DEFENSE (Survivability)
+-- BATTLE DEFENSE
 -- =========================
 CREATE TABLE IF NOT EXISTS battle_defense (
     id SERIAL PRIMARY KEY,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS battle_utility (
 );
 
 -- =========================
--- TAGS SYSTEM
+-- TAG SYSTEM
 -- =========================
 
 CREATE TABLE IF NOT EXISTS tags (
@@ -115,7 +115,7 @@ WHERE EXISTS (
 );
 
 -- =========================
--- OPTIONAL: INDEXES (performance)
+-- INDEXES
 -- =========================
 
 CREATE INDEX IF NOT EXISTS idx_battle_date
