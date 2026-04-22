@@ -5,8 +5,6 @@ __pycache__/
 # Env
 .env
 
-# User data
-reports/*
 
 # Docker volumes (if local)
 postgres-data/
