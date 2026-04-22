@@ -47,6 +47,8 @@ The first step is to save all of the battle reports from your battle history.
 * When processed, .
 * At this point I recommend manually adding `[tournament]` and `[dissonance]` tags via the filename.
 
+---
+
 ### 1. Clone the Repository (aka download a copy)
 
 Using GitHub Desktop:
@@ -80,7 +82,7 @@ docker compose up --build
 
 ---
 
-## 2. Add the Battle Reports
+### 3. Add the Battle Reports
 
 1. Open this folder in File Explorer:
 
@@ -94,7 +96,7 @@ Files will be **automatically processed within a few seconds**
 
 ---
 
-### 3. Open the web interface
+### 4. Open the web interface
 
 Go to:
 
@@ -106,7 +108,7 @@ You should see all of your battle reports along with basic funcationality to add
 
 ---
 
-### 4. Open Grafana
+### 5. Open Grafana
 
 Go to:
 
