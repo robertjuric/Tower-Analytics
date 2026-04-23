@@ -1,0 +1,509 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1509141482434560,
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P78DC24F8AA21B398"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "death_wave",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "golden_bot",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "golden_tower",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "black_hole",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "dataset": "towerdb",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P78DC24F8AA21B398"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  r.battle_date AS time,\r\n\r\n  MAX(CASE WHEN e.metric = 'golden_bot' THEN e.value END) AS golden_bot,\r\n  MAX(CASE WHEN e.metric = 'golden_tower' THEN e.value END) AS golden_tower,\r\n  MAX(CASE WHEN e.metric = 'black_hole' THEN e.value END) AS black_hole,\r\n  MAX(CASE WHEN e.metric = 'death_wave' THEN e.value END) AS death_wave\r\n\r\nFROM battle_reports r\r\nJOIN battle_economy e ON r.id = e.report_id\r\n\r\nWHERE e.category = 'coins'\r\n  AND $__timeFilter(r.battle_date)\r\n  AND e.metric IN (\r\n    'golden_bot',\r\n    'golden_tower',\r\n    'black_hole',\r\n    'death_wave'\r\n  )\r\n  AND NOT EXISTS (\r\n    SELECT 1\r\n    FROM battle_report_tags rt\r\n    JOIN tags t ON rt.tag_id = t.id\r\n    WHERE rt.report_id = r.id\r\n      AND t.name IN ('dissonance', 'tournament', 'mission')\r\n  )\r\n\r\nGROUP BY r.battle_date\r\nORDER BY time;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Economy",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P78DC24F8AA21B398"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "reroll_shards_earned",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "dataset": "towerdb",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P78DC24F8AA21B398"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  r.battle_date AS time,\r\n\r\n  MAX(CASE WHEN e.metric = 'reroll_shards_earned' THEN e.value END) AS reroll_shards_earned,\r\n  MAX(CASE WHEN e.metric = 'reroll_shards_fetched' THEN e.value END) AS reroll_shards_fetched,\r\n  MAX(CASE WHEN e.metric = 'cannon_shards' THEN e.value END) AS cannon_shards,\r\n  MAX(CASE WHEN e.metric = 'armor_shards' THEN e.value END) AS armor_shards,\r\n  MAX(CASE WHEN e.metric = 'generator_shards' THEN e.value END) AS generator_shards,\r\n  MAX(CASE WHEN e.metric = 'core_shards' THEN e.value END) AS core_shards,\r\n  MAX(CASE WHEN e.metric = 'common_modules' THEN e.value END) AS common_modules,\r\n  MAX(CASE WHEN e.metric = 'rare_modules' THEN e.value END) AS rare_modules\r\n\r\nFROM battle_reports r\r\nJOIN battle_economy e ON r.id = e.report_id\r\n\r\nWHERE e.category = 'currencies'\r\n  AND $__timeFilter(r.battle_date)\r\n  AND e.metric IN (\r\n    'reroll_shards_earned',\r\n    'reroll_shards_fetched',\r\n    'cannon_shards',\r\n    'armor_shards',\r\n    'generator_shards',\r\n    'core_shards',\r\n    'common_modules',\r\n    'rare_modules'\r\n  )\r\n  AND NOT EXISTS (\r\n    SELECT 1\r\n    FROM battle_report_tags rt\r\n    JOIN tags t ON rt.tag_id = t.id\r\n    WHERE rt.report_id = r.id\r\n      AND t.name IN ('dissonance', 'tournament', 'mission')\r\n  )\r\n\r\nGROUP BY r.battle_date\r\nORDER BY time;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Modules & Shards",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "P78DC24F8AA21B398"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 4,
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.0.1",
+      "targets": [
+        {
+          "dataset": "towerdb",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "P78DC24F8AA21B398"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  r.battle_date AS time,\r\n\r\n  MAX(CASE WHEN e.metric = 'gems' THEN e.value END) AS gems,\r\n  MAX(CASE WHEN e.metric = 'ad_gems' THEN e.value END) AS ad_gems,\r\n  MAX(CASE WHEN e.metric = 'fetch_gems' THEN e.value END) AS fetch_gems,\r\n  MAX(CASE WHEN e.metric = 'gem_blocks_tapped' THEN e.value END) AS gem_blocks_tapped,\r\n  MAX(CASE WHEN e.metric = 'medals' THEN e.value END) AS medals\r\n\r\nFROM battle_reports r\r\nJOIN battle_economy e ON r.id = e.report_id\r\n\r\nWHERE e.category = 'currencies'\r\n  AND $__timeFilter(r.battle_date)\r\n  AND e.metric IN (\r\n    'gems',\r\n    'ad_gems',\r\n    'fetch_gems',\r\n    'gem_blocks_tapped',\r\n    'medals'\r\n  )\r\n  AND NOT EXISTS (\r\n    SELECT 1\r\n    FROM battle_report_tags rt\r\n    JOIN tags t ON rt.tag_id = t.id\r\n    WHERE rt.report_id = r.id\r\n      AND t.name IN ('dissonance', 'tournament', 'mission')\r\n  )\r\n\r\nGROUP BY r.battle_date\r\nORDER BY time;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Medals and Gems",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 42,
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Economy Overview",
+  "uid": "ad86xbq",
+  "version": 26
+}
