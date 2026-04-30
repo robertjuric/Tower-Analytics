@@ -130,7 +130,7 @@ The Fix: Set all dashboard timezones to UTC to view the actual date/time
 
 2. When including multiple metrics in a panel, some similar metrics might not scale the same. You may need to set some values axis placement to the right to get 2 different scaling in one panel.
 
-3. For the dates use a custom unit to shorten them to MM/DD. The unit would look like custom: time:MM\/DD
+3. For the dates use a custom unit to shorten them to MM/DD. The unit would look like custom: 'time:MM\/DD'
 
 4. The numbers are very large when written out fully, use the short unit to get the abbreviations.
 
